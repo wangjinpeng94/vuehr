@@ -38,11 +38,16 @@
                 this.$refs.loginForm.validate((valid) => {
                     if (valid) {
                         console.log("loginForm:"+this.loginForm);
+
                         postKeyValueRequest('/doLogin',this.loginForm).then(resp=>{
 
                             if(resp){
-                                alert(JSON.stringify(resp))
-                                alert("resp:")
+                                // alert(JSON.stringify(resp))
+                                // alert("resp:")
+                                window.sessionStorage.setItem("user", JSON.stringify(resp.obj));
+                                this.$router.replace("/home");
+
+
                             }
 
                         })
