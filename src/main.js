@@ -12,6 +12,9 @@ import {deleteRequest} from "./utils/api";
 import {getRequest} from "./utils/api";
 
 import store from './store'
+import {initMenu} from "./utils/menus";
+
+import 'font-awesome/css/font-awesome.min.css'
 
 Vue.prototype.postRequest=postRequest;
 Vue.prototype.postKeyValueRequest=postKeyValueRequest;
@@ -23,6 +26,14 @@ Vue.prototype.getRequest=getRequest;
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
+router.beforeEach((to,from,next)=>{
+  if (to.path == '/') {
+    next();
+  }else{
+    initMenu(router,store);
+    next();
+  }
+})
 
 new Vue({
   router,

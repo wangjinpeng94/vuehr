@@ -18,12 +18,12 @@
        </el-header>
        <el-container>
            <el-aside width="200px">
-               <el-menu router><!--@select="menuClick"-->
+               <el-menu router unique-opened><!--@select="menuClick"-->
 
-                   <el-submenu index="1" v-for="(item,index) in this.$router.options.routes"
+                   <el-submenu :index="index+''" v-for="(item,index) in this.routes"
                                v-if="!item.hidden" :key="index">
                        <template slot="title">
-                           <i class="el-icon-location"></i>
+                           <i style="color: #409eff;margin-right: 5px;" :class="item.iconCls"></i>
                            <span>{{item.name}}</span>
                        </template>
                            <el-menu-item :index="child.path"
@@ -49,6 +49,11 @@
                 user:JSON.parse(window.sessionStorage.getItem("user"))
             }
         },
+        computed:{
+          routes(){
+              return this.$store.state.routes;
+          }
+        },
         methods:{
             // menuClick(index){
             //     // console.log(index);
@@ -65,6 +70,7 @@
                    }).then(() => {
                        this.getRequest("/logout");
                        window.sessionStorage.removeItem("user");
+                       this.$store.commit("initRoutes",[])
                        this.$router.replace("/")
 
                    }).catch(() => {
