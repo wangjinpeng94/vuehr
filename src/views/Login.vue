@@ -4,7 +4,8 @@
            <h3 class="logintitle">系统登录</h3>
            <el-form-item prop="username">
                <el-input type="text" v-model="loginForm.username" auto-complete="off" placeholder="请输入用户名"></el-input>
-               <el-input type="text" v-model="loginForm.password" auto-complete="off" placeholder="请输入用户密码"></el-input>
+               <el-input type="text" v-model="loginForm.password" auto-complete="off" placeholder="请输入用户密码"
+               @keydown.enter.native="submitLogin"></el-input>
                <el-checkbox class="loginRemeber" v-model="checked"></el-checkbox>
                <el-button type="primary" style="width:100%" @click="submitLogin">登录</el-button>
            </el-form-item>

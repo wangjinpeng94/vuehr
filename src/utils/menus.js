@@ -39,6 +39,9 @@ export const  formatRoutes=(routes)=> {
         meta:meta,
         children:children,
         component(resolve){
+            if (component.startsWith("Home")) {
+                require(['../views/' + component + '.vue'], resolve);
+            }
             if (component.startsWith("Bmp")) {
                 require(['../views/emp/' + component + '.vue'], resolve);
             }
@@ -51,7 +54,7 @@ export const  formatRoutes=(routes)=> {
             else if (component.startsWith("Sta")) {
                 require(['../views/sta/' + component + '.vue'], resolve);
             }
-            if (component.startsWith("Sys")) {
+            else if (component.startsWith("Sys")) {
                 require(['../views/sys/' + component + '.vue'], resolve);
             }
 
