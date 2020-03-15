@@ -19,7 +19,7 @@ import 'font-awesome/css/font-awesome.min.css'
 Vue.prototype.postRequest=postRequest;
 Vue.prototype.postKeyValueRequest=postKeyValueRequest;
 Vue.prototype.deleteRequest=deleteRequest;
-Vue.prototype.postRequest=putRequest;
+Vue.prototype.putRequest=putRequest;
 Vue.prototype.getRequest=getRequest;
 
 
