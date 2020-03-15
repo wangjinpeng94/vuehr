@@ -1,10 +1,10 @@
 <template>
-    操作日志管理
+    <div>职称管理</div>
 </template>
 
 <script>
     export default {
-        name: "SysLog"
+        name: "JobLevelMana"
     }
 </script>
 

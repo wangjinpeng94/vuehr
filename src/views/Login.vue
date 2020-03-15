@@ -46,7 +46,8 @@
                                 // alert(JSON.stringify(resp))
                                 // alert("resp:")
                                 window.sessionStorage.setItem("user", JSON.stringify(resp.obj));
-                                this.$router.replace("/home");
+                                let path=this.$route.query.redirect;
+                                this.$router.replace((path=='/'||path==undefined)?'home':path);
 
 
                             }

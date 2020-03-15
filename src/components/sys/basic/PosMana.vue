@@ -1,10 +1,10 @@
 <template>
-    基础信息设置
+    <div>职位管理</div>
 </template>
 
 <script>
     export default {
-        name: "SysBasic"
+        name: "PosMana"
     }
 </script>
 

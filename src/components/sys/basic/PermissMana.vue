@@ -1,10 +1,10 @@
 <template>
-    系统管理
+    <div>权限管理</div>
 </template>
 
 <script>
     export default {
-        name: "SysCfg"
+        name: "PermissMana"
     }
 </script>
 

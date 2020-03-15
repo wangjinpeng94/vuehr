@@ -1,10 +1,10 @@
 <template>
-    备份恢复数据库
+    <div>部门管理</div>
 </template>
 
 <script>
     export default {
-        name: "SysData"
+        name: "DepMana"
     }
 </script>
 
