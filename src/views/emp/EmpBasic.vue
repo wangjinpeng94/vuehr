@@ -200,10 +200,10 @@
                         label="操作"
                         width="200">
 
-                    <template ><!--slot-scope="scope" -->
+                    <template  slot-scope="scope">
                         <el-button style="padding: 3px" size="mini">编辑</el-button>
                         <el-button style="padding: 3px" size="mini" type="primary">查看高级资料</el-button>
-                        <el-button style="padding: 3px" size="mini" type="danger">删除</el-button>
+                        <el-button @click="deleteEmp(scope.row)" style="padding: 3px" size="mini" type="danger">删除</el-button>
                     </template>
 
                 </el-table-column>
@@ -227,7 +227,7 @@
                     :visible.sync="dialogVisible"
                     width="70%"
             >
-                <el-form>
+                <el-form :model="emp" :rules="rules" ref="empForm">
                     <el-row>
                         <el-col :span="6">
                             <el-form-item label="姓名" prop="emp.name">
@@ -513,7 +513,7 @@
                 size: 10,
                 keyword: '',
                 emp: {
-                    name: "江南一点雨",
+                    name: null,
                     gender: "男",
                     birthday: "1990-01-01",
                     idCard: "610122199001011256",
@@ -523,9 +523,9 @@
                     politicId: 13,
 
                     email: "laowang@qq.com",
-                    phone: "18565558897",
+                    phone: null,
                     address: "深圳市南山区",
-                    departmentId: 5,
+                    departmentId: null,
                     jobLevelId: 9,
                     posId: 29,
                     engageForm: "劳务合同",
@@ -549,7 +549,37 @@
                 politicsstatus: [],
                 positions: [],
                 tiptopDegree: ['博士', '硕士', '本科', '大专', '高中', '初中', '小学', '其他'],
-                inputDepname:''
+                inputDepname:'',
+                rules:{
+                    name: [{required: true, message: '请输入用户名', trigger: 'blur'}],
+                    gender: [{required: true, message: '请输入性别', trigger: 'blur'}],
+                    idCard: [{required: true, message: '请输入身份证', trigger: 'blur'},{pattern:'\n' +
+                            '/^[1-9]\\d{5}(18|19|20|(3\\d))\\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$/',message: '身份证号码格式不正确',trigger: 'blur'}],
+                    wedlock: [{required: true, message: '请输入婚姻状况', trigger: 'blur'}],
+                    nationId: [{required: true, message: '请输入民族', trigger: 'blur'}],
+                    nativePlace: [{required: true, message: '请输入籍贯', trigger: 'blur'}],
+                    politicId: [{required: true, message: '请输入政治面貌', trigger: 'blur'}],
+                    email: [{required: true, message: '请输入邮箱', trigger: 'blur'},
+                        {type:'email',message: '邮箱格式不正确',trigger: 'blur'}],
+                    phone: [{required: true, message: '请输入手机号码', trigger: 'blur'}],
+                    address: [{required: true, message: '请输入住址', trigger: 'blur'}],
+                    departmentId: [{required: true, message: '请输入部门', trigger: 'blur'}],
+                    jobLevelId: [{required: true, message: '请输入工作级别', trigger: 'blur'}],
+                    posId: [{required: true, message: '请输入职位', trigger: 'blur'}],
+                    engageForm: [{required: true, message: '请输入用户名', trigger: 'blur'}],
+                    tiptopDegree: [{required: true, message: '请输入最高学历', trigger: 'blur'}],
+                    specialty: [{required: true, message: '请输入专业', trigger: 'blur'}],
+                    school: [{required: true, message: '请输入学校', trigger: 'blur'}],
+                    beginDate: [{required: true, message: '请输入入职日期', trigger: 'blur'}],
+                    workState: [{required: true, message: '请输入工作状态', trigger: 'blur'}],
+                    workID: [{required: true, message: '请输入工号', trigger: 'blur'}],
+                    contractTerm: [{required: true, message: '请输入合同日期', trigger: 'blur'}],
+                    conversionTime: [{required: true, message: '请输入转正日期', trigger: 'blur'}],
+                    notWorkDate: [{required: true, message: '请输入用户名', trigger: 'blur'}],
+                    beginContract: [{required: true, message: '请输入用户名', trigger: 'blur'}],
+                    endContract: [{required: true, message: '请输入用户名', trigger: 'blur'}],
+                    workAge: [{required: true, message: '请输入工作年限', trigger: 'blur'}]
+                }
 
 
             }
@@ -561,11 +591,39 @@
 
         },
         methods: {
+            deleteEmp(data){
+                this.$confirm('此操作将永久删除【'+data.name+'】, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    console.log("data.id:"+data.id)
+                    this.deleteRequest("/employee/basic/"+data.id).then(resp=>{
+                        if (resp) {
+                            this.initEmps();
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
             doAddEmp(){
-                this.postRequest("/emp/basic/",this.emp).then(resp=>{
-                    this.dialogVisible=false;
-                    this.initEmps();
+                this.$refs['empForm'].validate(valid =>{
+                    console.log("valid:"+valid)
+                    if (valid) {
+                        this.postRequest("/employee/basic/",this.emp).then(resp=>{
+                            if (resp) {
+
+                                this.dialogVisible=false;
+                                this.initEmps();
+                            }
+                        })
+                    }
                 })
+
             },
             handleNodeClick(data) {
 this.popVisable=!this.popVisable;
@@ -576,7 +634,7 @@ this.inputDepname=data.name;
                 this.popVisable = !this.popVisable
             },
             getMaxWorkID() {
-                this.getRequest("/emp/basic/maxWorkID/").then(resp => {
+                this.getRequest("/employee/basic/maxWorkID/").then(resp => {
                     if (resp) {
                         this.emp.workID = resp.obj;
                     }
@@ -584,7 +642,7 @@ this.inputDepname=data.name;
             },
             initPositions() {
                 if (!window.sessionStorage.getItem("positions")) {
-                    this.getRequest("/emp/basic/positions/").then(resp => {
+                    this.getRequest("/employee/basic/positions/").then(resp => {
                         this.positions = resp;
                     })
                 }
@@ -593,7 +651,7 @@ this.inputDepname=data.name;
                 console.log("initSelectBoxData:")
                 if (!window.sessionStorage.getItem("deps")) {
                     console.log(123)
-                    this.getRequest("/emp/basic/deps").then(resp => {
+                    this.getRequest("/employee/basic/deps").then(resp => {
                         if (resp) {
                             this.allDeps = resp;
 
@@ -606,7 +664,7 @@ this.inputDepname=data.name;
                 }
 
                 if (!window.sessionStorage.getItem("jobLevel")) {
-                    this.getRequest("/emp/basic/jobLevel").then(resp => {
+                    this.getRequest("/employee/basic/jobLevel").then(resp => {
                         if (resp) {
                             this.jobLevel = resp;
                             window.sessionStorage.setItem("jobLevel", JSON.stringify(resp))
@@ -618,7 +676,7 @@ this.inputDepname=data.name;
                 }
 
                 if (!window.sessionStorage.getItem("nations")) {
-                    this.getRequest("/emp/basic/nations").then(resp => {
+                    this.getRequest("/employee/basic/nations").then(resp => {
                         if (resp) {
                             this.nations = resp;
                             window.sessionStorage.setItem("nations", JSON.stringify(resp))
@@ -630,7 +688,7 @@ this.inputDepname=data.name;
                 }
 
                 if (!window.sessionStorage.getItem("politicsstatus")) {
-                    this.getRequest("/emp/basic/politicsstatus").then(resp => {
+                    this.getRequest("/employee/basic/politicsstatus").then(resp => {
                         if (resp) {
                             this.politicsstatus = resp;
                             window.sessionStorage.setItem("politicsstatus", JSON.stringify(resp))
@@ -662,7 +720,7 @@ this.inputDepname=data.name;
             initEmps() {
                 this.emps = [];
                 this.loading = true;
-                this.getRequest("/emp/basic/?page=" + this.page + "&size=" + this.size + "&keyword=" + this.keyword).then(resp => {
+                this.getRequest("/employee/basic/?page=" + this.page + "&size=" + this.size + "&keyword=" + this.keyword).then(resp => {
                     this.loading = false;
                     if (resp) {
                         this.emps = resp.data;
